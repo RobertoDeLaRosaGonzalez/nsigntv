@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+  nginx-container-nsign:
+    container_name: nginx-container-nsign
+    build:
+      context: ./docker/nginx
+      args:
+        UID: $U_ID
+    ports:
+      - 8080:8080
+    volumes:
+      - ./public:/appdata/www/public
+    depends_on:
+      - php-container-nsign
+    networks:
+      - nsign-network
+
+  php-container-nsign:
+    container_name: php-container-nsign
+    build:
+      context: ./docker/php
+      args:
+        UID: $U_ID
+    environment:
+      PHP_IDE_CONFIG: serverName=Docker
+    volumes:
+      - ./:/appdata/www
+    networks:
+      - nsign-network
+
+networks:
+  nsign-network:
+    external: true
+    driver: bridge
